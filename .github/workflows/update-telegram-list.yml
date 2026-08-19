@@ -33,18 +33,7 @@ jobs:
           
           # Add verified extended CIDR ranges (confirmed Telegram infrastructure)
           # Source: historical Telegram CIDR expansions, fernvenue/telegram-cidr-list, rezmoss/cloud-provider-ip-addresses
-          cat > /tmp/extended_cidr.txt << 'CIDR_EOF'
-5.28.192.0/18
-91.108.0.0/16
-95.161.64.0/20
-149.154.160.0/21
-149.154.168.0/22
-149.154.172.0/22
-185.76.151.0/24
-196.55.216.167/32
-2a0a:f280::/29
-2a0a:f280:203::/48
-CIDR_EOF
+          printf '5.28.192.0/18\n91.108.0.0/16\n95.161.64.0/20\n149.154.160.0/21\n149.154.168.0/22\n149.154.172.0/22\n185.76.151.0/24\n196.55.216.167/32\n2a0a:f280::/29\n2a0a:f280:203::/48\n' > /tmp/extended_cidr.txt
           
           # Combine official + extended, deduplicate
           ALL_CIDR=$(echo -e "$NEW_CIDR\n$(cat /tmp/extended_cidr.txt)" | grep -E '^[0-9a-fA-F:.]+/[0-9]+' | sort -u)
@@ -111,8 +100,8 @@ CIDR_EOF
         run: |
           # Replace the 4 DOMAIN-SUFFIX telegram.* lines with single DOMAIN-KEYWORD
           sed -i '/^DOMAIN-SUFFIX,telegram\.(dog|me|org|space)$/d' Telegram.list
-          # Add DOMAIN-KEYWORD,telegram after the DOMAIN-SUFFIX section (after usercontent.dev)
-          sed -i '/^DOMAIN-SUFFIX,usercontent\.dev$/a DOMAIN-KEYWORD,telegram' Telegram.list
+          # Add DOMAIN-KEYWORD,telegram after the DOMAIN-SUFFIX section (after userdata.dev)
+          sed -i '/^DOMAIN-SUFFIX,userdata\.dev$/a DOMAIN-KEYWORD,telegram' Telegram.list
 
       - name: Check for changes
         id: changes
