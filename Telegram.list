@@ -1,14 +1,14 @@
 # NAME: Telegram — Official + Extended
 # AUTHOR: 23Mb
 # SOURCE: core.telegram.org, suip.biz, fernvenue/telegram-cidr-list
-# UPDATED: 2026-04-06
+# UPDATED: 2026-08-19
 # DESCRIPTION: правила для обхода блокировок Telegram (VoIP + медиа + боты)
 # DOMAIN: 2
 # DOMAIN-KEYWORD: 1
 # DOMAIN-SUFFIX: 24
 # IP-ASN: 5
-# IP-CIDR: 21
-# TOTAL: 53
+# IP-CIDR: 14
+# TOTAL: 46
 
 # === Домены ===
 DOMAIN,api.imem.app
@@ -39,34 +39,23 @@ DOMAIN-SUFFIX,tx.me
 DOMAIN-SUFFIX,usercontent.dev
 DOMAIN-KEYWORD,nicegram
 
-# === IPv4 CIDR (официальные + расширенные) ===
-IP-CIDR,5.28.192.0/18,no-resolve
+# === IPv4 CIDR (официальные) ===
+IP-CIDR,149.154.160.0/20,no-resolve
+IP-CIDR,185.76.151.0/24,no-resolve
 IP-CIDR,91.105.192.0/23,no-resolve
-IP-CIDR,91.108.4.0/22,no-resolve
-IP-CIDR,91.108.8.0/22,no-resolve
 IP-CIDR,91.108.12.0/22,no-resolve
 IP-CIDR,91.108.16.0/22,no-resolve
 IP-CIDR,91.108.20.0/22,no-resolve
-IP-CIDR,91.108.56.0/23,no-resolve
-IP-CIDR,91.108.58.0/23,no-resolve
-IP-CIDR,91.108.0.0/16,no-resolve
-IP-CIDR,95.161.64.0/20,no-resolve
-IP-CIDR,109.239.140.0/24,no-resolve
-IP-CIDR,139.59.210.98/32,no-resolve
-IP-CIDR,149.154.160.0/20,no-resolve
-IP-CIDR,149.154.160.0/21,no-resolve
-IP-CIDR,149.154.168.0/22,no-resolve
-IP-CIDR,149.154.172.0/22,no-resolve
-IP-CIDR,185.76.151.0/24,no-resolve
-IP-CIDR,196.55.216.167/32,no-resolve
+IP-CIDR,91.108.4.0/22,no-resolve
+IP-CIDR,91.108.56.0/22,no-resolve
+IP-CIDR,91.108.8.0/22,no-resolve
 
 # === IPv6 CIDR ===
 IP-CIDR,2001:67c:4e8::/48,no-resolve
 IP-CIDR,2001:b28:f23c::/48,no-resolve
 IP-CIDR,2001:b28:f23d::/48,no-resolve
 IP-CIDR,2001:b28:f23f::/48,no-resolve
-IP-CIDR,2a0a:f280::/29,no-resolve
-IP-CIDR,2a0a:f280:203::/48,no-resolve
+IP-CIDR,2a0a:f280::/32,no-resolve
 
 # === ASN (динамические диапазоны) ===
 IP-ASN,211157,no-resolve
