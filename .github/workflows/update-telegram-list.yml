@@ -84,7 +84,8 @@ jobs:
           
           # Update header metadata with timestamp
           TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
-          TOTAL=$((IPV4_COUNT + IPV6_COUNT + 5 + 24 + 1 + 2))  # CIDR + ASN + domains from header
+          # TOTAL = CIDR + ASN + DOMAIN-SUFFIX + DOMAIN + DOMAIN-KEYWORD(2: telegram, nicegram)
+          TOTAL=$((IPV4_COUNT + IPV6_COUNT + 5 + 24 + 2 + 2))
           
           # Replace header lines with updated counts
           sed -i "s/^# UPDATED:.*/# UPDATED: $TIMESTAMP/" Telegram.list.new
