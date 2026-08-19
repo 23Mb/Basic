@@ -8,7 +8,7 @@
 # DOMAIN-SUFFIX: 24
 # IP-ASN: 5
 # IP-CIDR: 23
-# TOTAL: 56
+# TOTAL: 55
 
 # === Домены ===
 DOMAIN,api.imem.app
@@ -33,6 +33,7 @@ DOMAIN-SUFFIX,tg.dev
 DOMAIN-SUFFIX,ton.org
 DOMAIN-SUFFIX,tx.me
 DOMAIN-SUFFIX,userdata.dev
+DOMAIN-KEYWORD,telegram
 DOMAIN-KEYWORD,telegram
 DOMAIN-KEYWORD,nicegram
 
