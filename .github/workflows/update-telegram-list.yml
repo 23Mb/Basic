@@ -1,0 +1,110 @@
+name: Update Telegram.list
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # daily at 03:00 UTC
+  workflow_dispatch:      # manual trigger
+
+permissions:
+  contents: write  # needed to push commits
+
+jobs:
+  update-telegram-list:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch latest CIDR from official source
+        id: fetch
+        run: |
+          set -euo pipefail
+          OFFICIAL_URL="https://core.telegram.org/resources/cidr.txt"
+          echo "Fetching from $OFFICIAL_URL"
+          NEW_CIDR=$(curl -fsSL "$OFFICIAL_URL" | grep -E '^[0-9a-fA-F:.]+/[0-9]+' | sort -u)
+          if [ -z "$NEW_CIDR" ]; then
+            echo "❌ Failed to fetch CIDR list"
+            exit 1
+          fi
+          echo "Fetched CIDR:"
+          echo "$NEW_CIDR"
+          # Save for later steps
+          echo "$NEW_CIDR" > /tmp/new_cidr.txt
+
+      - name: Generate updated Telegram.list
+        id: generate
+        run: |
+          set -euo pipefail
+          
+          # Read current file
+          CURRENT=$(cat Telegram.list)
+          
+          # Extract header (everything before "# === IPv4 CIDR")
+          HEADER=$(echo "$CURRENT" | sed -n '1,/^# === IPv4 CIDR/p' | head -n -1)
+          
+          # Read new CIDR
+          NEW_CIDR=$(cat /tmp/new_cidr.txt)
+          
+          # Split into IPv4 and IPv6
+          IPV4=$(echo "$NEW_CIDR" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/' | sort -u)
+          IPV6=$(echo "$NEW_CIDR" | grep -E '^[0-9a-fA-F:]+::/[0-9]+' | sort -u)
+          
+          # Count
+          IPV4_COUNT=$(echo "$IPV4" | grep -c '^' || echo 0)
+          IPV6_COUNT=$(echo "$IPV6" | grep -c '^' || echo 0)
+          
+          # Build new file
+          {
+            echo "$HEADER"
+            echo ""
+            echo "# === IPv4 CIDR (официальные) ==="
+            echo "$IPV4" | sed 's/^/IP-CIDR,/; s/$/,no-resolve/'
+            echo ""
+            echo "# === IPv6 CIDR ==="
+            echo "$IPV6" | sed 's/^/IP-CIDR,/; s/$/,no-resolve/'
+            echo ""
+            echo "# === ASN (динамические диапазоны) ==="
+            echo "IP-ASN,211157,no-resolve"
+            echo "IP-ASN,44907,no-resolve"
+            echo "IP-ASN,59930,no-resolve"
+            echo "IP-ASN,62014,no-resolve"
+            echo "IP-ASN,62041,no-resolve"
+          } > Telegram.list.new
+          
+          # Update header metadata
+          DATE=$(date -u +"%Y-%m-%d")
+          TOTAL=$((IPV4_COUNT + IPV6_COUNT + 5 + 24 + 1 + 2))  # CIDR + ASN + domains from header
+          
+          # Replace header lines with updated counts
+          sed -i "s/^# UPDATED:.*/# UPDATED: $DATE/" Telegram.list.new
+          sed -i "s/^# IP-CIDR:.*/# IP-CIDR: $((IPV4_COUNT + IPV6_COUNT))/" Telegram.list.new
+          sed -i "s/^# TOTAL:.*/# TOTAL: $TOTAL/" Telegram.list.new
+          
+          mv Telegram.list.new Telegram.list
+          
+          echo "Generated new Telegram.list:"
+          cat Telegram.list
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet Telegram.list; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No changes detected"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Changes detected:"
+            git diff Telegram.list
+          fi
+
+      - name: Commit and push changes
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Telegram.list
+          git commit -m "chore: update Telegram.list from official CIDR [$(date -u +'%Y-%m-%d')]"
+          git push
+          echo "✅ Pushed updated Telegram.list"
