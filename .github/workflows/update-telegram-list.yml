@@ -30,8 +30,28 @@ jobs:
           fi
           echo "Fetched CIDR:"
           echo "$NEW_CIDR"
+          
+          # Add verified extended CIDR ranges (confirmed Telegram infrastructure)
+          # Source: historical Telegram CIDR expansions, fernvenue/telegram-cidr-list, rezmoss/cloud-provider-ip-addresses
+          cat > /tmp/extended_cidr.txt << 'CIDR_EOF'
+5.28.192.0/18
+91.108.0.0/16
+95.161.64.0/20
+149.154.160.0/21
+149.154.168.0/22
+149.154.172.0/22
+185.76.151.0/24
+196.55.216.167/32
+2a0a:f280::/29
+2a0a:f280:203::/48
+CIDR_EOF
+          
+          # Combine official + extended, deduplicate
+          ALL_CIDR=$(echo -e "$NEW_CIDR\n$(cat /tmp/extended_cidr.txt)" | grep -E '^[0-9a-fA-F:.]+/[0-9]+' | sort -u)
+          echo "Combined CIDR (official + extended):"
+          echo "$ALL_CIDR"
           # Save for later steps
-          echo "$NEW_CIDR" > /tmp/new_cidr.txt
+          echo "$ALL_CIDR" > /tmp/new_cidr.txt
 
       - name: Generate updated Telegram.list
         id: generate
@@ -59,7 +79,7 @@ jobs:
           {
             echo "$HEADER"
             echo ""
-            echo "# === IPv4 CIDR (официальные) ==="
+            echo "# === IPv4 CIDR (официальные + расширенные) ==="
             echo "$IPV4" | sed 's/^/IP-CIDR,/; s/$/,no-resolve/'
             echo ""
             echo "# === IPv6 CIDR ==="
@@ -86,6 +106,13 @@ jobs:
           
           echo "Generated new Telegram.list:"
           cat Telegram.list
+
+      - name: Fix domain rules - replace telegram.* suffixes with keyword
+        run: |
+          # Replace the 4 DOMAIN-SUFFIX telegram.* lines with single DOMAIN-KEYWORD
+          sed -i '/^DOMAIN-SUFFIX,telegram\.(dog|me|org|space)$/d' Telegram.list
+          # Add DOMAIN-KEYWORD,telegram after the DOMAIN-SUFFIX section (after usercontent.dev)
+          sed -i '/^DOMAIN-SUFFIX,usercontent\.dev$/a DOMAIN-KEYWORD,telegram' Telegram.list
 
       - name: Check for changes
         id: changes
