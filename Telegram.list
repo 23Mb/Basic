@@ -1,13 +1,13 @@
 # NAME: Telegram — Official + Extended
 # AUTHOR: 23Mb
-# UPDATED: 2026-08-19 20:48:52 UTC
+# UPDATED: 2026-08-19 20:49:51 UTC
 # DESCRIPTION: правила для обхода блокировок Telegram (VoIP + медиа + боты)
 # DOMAIN: 2
 # DOMAIN-KEYWORD: 2
 # DOMAIN-SUFFIX: 24
 # IP-ASN: 5
 # IP-CIDR: 23
-# TOTAL: 55
+# TOTAL: 56
 
 # === Домены ===
 DOMAIN,api.imem.app
