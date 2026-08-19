@@ -82,12 +82,12 @@ jobs:
             echo "IP-ASN,62041,no-resolve"
           } > Telegram.list.new
           
-          # Update header metadata
-          DATE=$(date -u +"%Y-%m-%d")
+          # Update header metadata with timestamp
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
           TOTAL=$((IPV4_COUNT + IPV6_COUNT + 5 + 24 + 1 + 2))  # CIDR + ASN + domains from header
           
           # Replace header lines with updated counts
-          sed -i "s/^# UPDATED:.*/# UPDATED: $DATE/" Telegram.list.new
+          sed -i "s/^# UPDATED:.*/# UPDATED: $TIMESTAMP/" Telegram.list.new
           sed -i "s/^# IP-CIDR:.*/# IP-CIDR: $((IPV4_COUNT + IPV6_COUNT))/" Telegram.list.new
           sed -i "s/^# TOTAL:.*/# TOTAL: $TOTAL/" Telegram.list.new
           
@@ -101,7 +101,10 @@ jobs:
           # Replace the 4 DOMAIN-SUFFIX telegram.* lines with single DOMAIN-KEYWORD
           sed -i '/^DOMAIN-SUFFIX,telegram\.(dog|me|org|space)$/d' Telegram.list
           # Add DOMAIN-KEYWORD,telegram after the DOMAIN-SUFFIX section (after userdata.dev)
-          sed -i '/^DOMAIN-SUFFIX,userdata\.dev$/a DOMAIN-KEYWORD,telegram' Telegram.list
+          # Only if not already present
+          if ! grep -q '^DOMAIN-KEYWORD,telegram$' Telegram.list; then
+            sed -i '/^DOMAIN-SUFFIX,userdata\.dev$/a DOMAIN-KEYWORD,telegram' Telegram.list
+          fi
 
       - name: Check for changes
         id: changes
@@ -121,6 +124,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add Telegram.list
-          git commit -m "chore: update Telegram.list from official CIDR [$(date -u +'%Y-%m-%d')]"
+          git commit -m "chore: update Telegram.list from official CIDR [$(date -u +'%Y-%m-%d %H:%M:%S UTC')]"
           git push
           echo "✅ Pushed updated Telegram.list"
