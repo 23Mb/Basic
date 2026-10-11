@@ -1,0 +1,11 @@
+# Porno.list: 2026-10-11 — Pornhub / XNXX / BongaCams
+# Shadowrocket rules, PROXY
+DOMAIN-SUFFIX,pornhub.com
+DOMAIN-SUFFIX,pornhubpremium.com
+DOMAIN-SUFFIX,phncdn.com
+DOMAIN-SUFFIX,xnxx.com
+DOMAIN-SUFFIX,xnxx-cdn.com
+DOMAIN-SUFFIX,xnxx.zone
+DOMAIN-SUFFIX,bongacams.com
+DOMAIN-KEYWORD,bongacams
+DOMAIN-KEYWORD,pornhub
